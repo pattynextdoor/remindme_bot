@@ -18,42 +18,33 @@ api = tweepy.API(auth)
 
 twts = api.search(q="@remindme_bot")
 
-    #for line in f:
-        #api.update_status(line) #updates status
-        #time.sleep(900)#Waits 15 minutes. sleep function takes in seconds
-
-    #list of specific strings we want to check for in Tweets
-t = ['@remindme_bot', 'remindme_bot to wash the dishes']
-
 tweet_count_before = 0
 
 for s in twts:
-    for i in t:
-        if i == s.text:
-            sn = s.user.screen_name #gets user's username
-            sname = s.user.name
-            tweet_count_before = api.get_user(sn).statuses_count
-            m = "@%(sn)s Okay %(sname)s, expect a tweet when you tweet again." % {'sn': sn, 'sname': sname}#creates message 'm', customized with user's username
-            s = api.update_status(m, s.id) #updates status
-            time.sleep(3) #arbitrary time
+    sn = s.user.screen_name #gets user's username
+    sname = s.user.name
+    tweet_count_before = api.get_user(sn).statuses_count
+    m = "@%(sn)s Okay %(sname)s, expect a tweet when you tweet again." % {'sn': sn, 'sname': sname}#creates message 'm', customized with user's username
+    s = api.update_status(m, s.id) #updates status
+    time.sleep(3) #arbitrary time
+
+    while(tweet_count_before <= api.get_user(sn).statuses_count):
+        print "searching for new tweets..."
+        time.sleep(2)
+        if (tweet_count_before < api.get_user(sn).statuses_count):
+            print "done"
+            break
+
+    for s in twts:
+        sn = s.user.screen_name #gets user's username
+        sname = s.user.name
+        m = "@%(sn)s Okay %(sname)s, it's time." % {'sn': sn, 'sname': sname}#creates message 'm', customized with user's username
+        s = api.update_status(m, s.id) #updates status
+        time.sleep(3) #arbitrary time
 
 
 
-while(tweet_count_before <= api.get_user(sn).statuses_count):
-    print "searching for new tweets..."
-    time.sleep(2)
-    if (tweet_count_before < api.get_user(sn).statuses_count):
-        print "done"
-        break
 
-for s in twts:
-    for i in t:
-        if i == s.text:
-            sn = s.user.screen_name #gets user's username
-            sname = s.user.name
-            m = "@%(sn)s Okay %(sname)s, it's time." % {'sn': sn, 'sname': sname}#creates message 'm', customized with user's username
-            s = api.update_status(m, s.id) #updates status
-            time.sleep(3) #arbitrary time
 
 
 
