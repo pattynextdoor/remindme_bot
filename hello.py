@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import tweepy, time, sys
+import tweepy, time, sys, datetime
 #from our keys module (keys.py), import the keys dictionary
 from keys import keys
 
@@ -26,12 +26,23 @@ filename.close() #closes text file
     #time.sleep(900)#Waits 15 minutes. sleep function takes in seconds
 
 #list of specific strings we want to check for in Tweets
-t = ['@wyd_bot']
+t = ['@wyd_bot', '@wyd_bot to wash the dishes']
+
+
 
 for s in twts:
     for i in t:
         if i == s.text:
             sn = s.user.screen_name #gets user's username
-            m = "@%s Expect a tweet at placeholder time" % (sn) #creates message 'm', customized with user's username
+            m = "@%s Expect a tweet at " % (sn) #creates message 'm', customized with user's username
             s = api.update_status(m, s.id) #updates status
-            time.sleep(20)
+            time.sleep(3)
+
+public_tweets = api.home_timeline()
+for tweet in public_tweets:
+    print tweet.text
+
+user = api.get_user(sn)
+
+print user.screen_name
+print user.followers_count
