@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import tweepy, time, sys, datetime
+import tweepy, time, sys, datetime, string
 #from our keys module (keys.py), import the keys dictionary
 from keys import keys
 
@@ -30,6 +30,16 @@ for s in twts:
     s = api.update_status(m, s.id) #updates status
     time.sleep(3) #arbitrary time
 
+    timeString = task.rfind(" in ")
+    taskWithout = task[0:timeString]
+    print taskWithout
+    timeSet = task[timeString+4:]
+    print timeSet
+    timeMagnitude = timeSet[0:1]
+    print timeMagnitude
+    timeUnits = timeSet[2:]
+    print timeUnits
+
     while(tweet_count_before <= api.get_user(sn).statuses_count):
         print "searching for new tweets..."
         time.sleep(2)
@@ -40,17 +50,9 @@ for s in twts:
     for s in twts:
         sn = s.user.screen_name #gets user's username
         sname = s.user.name
-        m = "@%(sn)s Okay %(sname)s, it's time." % {'sn': sn, 'sname': sname}#creates message 'm', customized with user's username
+        m = "@%(sn)s Okay %(sname)s, it's time %(taskWithout)" % {'sn': sn, 'sname': sname, 'taskWithout' : taskWithout}#creates message 'm', customized with user's username
         s = api.update_status(m, s.id) #updates status
         time.sleep(3) #arbitrary time
-
-for status in tweepy.Cursor(api.user_timeline).items():
-    try:
-        api.destroy_status(status.id)
-    except:
-        pass
-
-
 
 
 
