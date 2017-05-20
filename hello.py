@@ -23,8 +23,10 @@ tweet_count_before = 0
 for s in twts:
     sn = s.user.screen_name #gets user's username
     sname = s.user.name
+    task = s.text[14:]
+    print task
     tweet_count_before = api.get_user(sn).statuses_count
-    m = "@%(sn)s Okay %(sname)s, expect a tweet when you tweet again." % {'sn': sn, 'sname': sname}#creates message 'm', customized with user's username
+    m = "@%(sn)s Okay %(sname)s, I'll remind you %(task)s." % {'sn': sn, 'sname': sname, 'task': task}#creates message 'm', customized with user's username
     s = api.update_status(m, s.id) #updates status
     time.sleep(3) #arbitrary time
 
@@ -42,7 +44,11 @@ for s in twts:
         s = api.update_status(m, s.id) #updates status
         time.sleep(3) #arbitrary time
 
-
+for status in tweepy.Cursor(api.user_timeline).items():
+    try:
+        api.destroy_status(status.id)
+    except:
+        pass
 
 
 
