@@ -14,10 +14,10 @@ auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 api = tweepy.API(auth)
 
-filename=open(argfile,'r')
-f=filename.readlines()
-filename.close()
+filename=open(argfile,'r') #opens text file
+f=filename.readlines() #string named 'f' that reads all the lines of the text file
+filename.close() #closes text file
 
 for line in f:
-    api.update_status(line)
-    time.sleep(900)#Tweet every 15 minutes
+    api.update_status(line) #updates status
+    time.sleep(900)#Waits 15 minutes. sleep function takes in seconds
