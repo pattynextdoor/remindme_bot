@@ -25,7 +25,7 @@ for s in twts:
     sname = s.user.name
     task = s.text[14:]
     print task
-    tweet_count_before = api.get_user(sn).statuses_count
+    #tweet_count_before = api.get_user(sn).statuses_count
     m = "@%(sn)s Okay %(sname)s, I'll remind you %(task)s." % {'sn': sn, 'sname': sname, 'task': task}#creates message 'm', customized with user's username
     s = api.update_status(m, s.id) #updates status
     time.sleep(3) #arbitrary time
@@ -40,17 +40,19 @@ for s in twts:
     timeUnits = timeSet[2:]
     print timeUnits
 
-    while(tweet_count_before <= api.get_user(sn).statuses_count):
-        print "searching for new tweets..."
-        time.sleep(2)
-        if (tweet_count_before < api.get_user(sn).statuses_count):
-            print "done"
-            break
+    timeMagnitudeInt = int(timeMagnitude)
+    print timeMagnitudeInt
+
+    if timeUnits == "hours" or timeUnits == "hour":
+        time.sleep(timeMagnitudeInt * 3600)
+    if timeUnits == "minutes" or timeUnits == "minute":
+        time.sleep(timeMagnitudeInt * 60)
+
 
     for s in twts:
         sn = s.user.screen_name #gets user's username
         sname = s.user.name
-        m = "@%(sn)s Okay %(sname)s, it's time %(taskWithout)" % {'sn': sn, 'sname': sname, 'taskWithout' : taskWithout}#creates message 'm', customized with user's username
+        m = "@%(sn)s Okay %(sname)s, it's time %(taskWithout)s" % {'sn': sn, 'sname': sname, 'taskWithout' : taskWithout}#creates message 'm', customized with user's username
         s = api.update_status(m, s.id) #updates status
         time.sleep(3) #arbitrary time
 
