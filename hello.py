@@ -15,55 +15,55 @@ auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 api = tweepy.API(auth)
 #^^ all this stuff is for authenticating
 
-
-twts = api.search(q="@remindme_bot")
-
-tweet_count_before = 0
-
-for s in twts:
-    sn = s.user.screen_name #gets user's username
-    sname = s.user.name
-    task = s.text[14:]
-    print task
-    #tweet_count_before = api.get_user(sn).statuses_count
-    m = "@%(sn)s Okay %(sname)s, I'll remind you %(task)s." % {'sn': sn, 'sname': sname, 'task': task}#creates message 'm', customized with user's username
-    s = api.update_status(m, s.id) #updates status
-    time.sleep(3) #arbitrary time
-
-    timeString = task.rfind(" in ")
-    taskWithout = task[0:timeString]
-    print taskWithout
-    timeSet = task[timeString+4:]
-    print timeSet
-    timeMagnitude = timeSet[0:1]
-    print timeMagnitude
-    timeUnits = timeSet[2:]
-    print timeUnits
-
-    timeMagnitudeInt = int(timeMagnitude)
-    print timeMagnitudeInt
-
-    if timeUnits == "hours" or timeUnits == "hour":
-        time.sleep(timeMagnitudeInt * 3600)
-    if timeUnits == "minutes" or timeUnits == "minute":
-        time.sleep(timeMagnitudeInt * 60)
-
+while True:
+    twts = api.search(q="@remindme_bot")
 
     for s in twts:
-        sn = s.user.screen_name #gets user's username
-        sname = s.user.name
-        m = "@%(sn)s Okay %(sname)s, it's time %(taskWithout)s" % {'sn': sn, 'sname': sname, 'taskWithout' : taskWithout}#creates message 'm', customized with user's username
-        s = api.update_status(m, s.id) #updates status
-        time.sleep(3) #arbitrary time
+        if not s.favorited:
+            sn = s.user.screen_name #gets user's username
+            sname = s.user.name
+            task = s.text[14:]
+            print "Bot on task of \"%(task)s\" from user named @%(sn)s" % {'task' : task, 'sn' : sn}
+            #tweet_count_before = api.get_user(sn).statuses_count
+            m = "@%(sn)s Okay %(sname)s, I'll remind you %(task)s." % {'sn': sn, 'sname': sname, 'task': task}#creates message 'm', customized with user's username
+            try:
+                api.update_status(m, s.id) #updates status
+            except tweepy.error.TweepError:
+                continue
+            time.sleep(1) #arbitrary time
 
+            timeString = task.rfind(" in ")
+            taskWithout = task[0:timeString]
 
+            timeSet = task[timeString+4:]
 
-    #tweet_before = api.user_timeline(id=sn, count=1)
-    #for tweet in public_tweets: #prints all tweets that bot has
-    #    print tweet.text
+            timeMagnitude = timeSet[0:2]
+            if(timeMagnitude[1] == ' '):
+                timeMagnitude = timeSet[0:1]
+            print timeMagnitude
+            timeUnits = timeSet[2:]
+            print timeUnits
 
-    #user = api.get_user(sn)
+            timeMagnitudeInt = int(timeMagnitude)
+            timeMagDec = timeMagnitudeInt
 
-    #print user.screen_name
-    #print user.followers_count
-    #time.sleep(30)
+            print "Counting down..."
+
+            if timeUnits == "days" or timeUnits == "day":
+                time.sleep(timeMagnitudeInt * 3600 * 60)
+            if timeUnits == "hours" or timeUnits == "hour":
+                time.sleep(timeMagnitudeInt * 3600)
+            if timeUnits == "minutes" or timeUnits == "minute":
+                time.sleep(timeMagnitudeInt * 60)
+            else:
+                time.sleep(timeMagnitudeInt)
+
+            m = "@%(sn)s Okay %(sname)s, it's time %(taskWithout)s" % {'sn': sn, 'sname': sname, 'taskWithout' : taskWithout}#creates message 'm', customized with user's username
+            try:
+                api.update_status(m, s.id) #updates status
+            except tweepy.error.TweepError:
+                pass
+            try:
+                api.create_favorite(s.id)
+            except tweepy.error.TweepError:
+                pass
